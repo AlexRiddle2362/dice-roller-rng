@@ -1,0 +1,9 @@
+{
+    "display_name": "Dice Roller (RNG Injector)",
+    "loading_order": 5,
+    "js": "index.js",
+    "css": "style.css",
+    "author": "Alexander",
+    "version": "1.0.0",
+    "generate_interceptor": "diceRollerInterceptor"
+}

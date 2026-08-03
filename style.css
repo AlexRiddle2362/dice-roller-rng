@@ -1,0 +1,9 @@
+.dice-roller-rng-settings label {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 2px;
+}
+
+.dice-roller-rng-settings small {
+    opacity: 0.7;
+}

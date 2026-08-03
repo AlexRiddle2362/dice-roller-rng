@@ -1,0 +1,38 @@
+<div class="dice-roller-rng-settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>🎲 Dice Roller (RNG Injector)</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+
+            <label class="checkbox_label">
+                <input id="dice_roller_enabled" type="checkbox" />
+                <span>Включено (бросок перед каждой генерацией)</span>
+            </label>
+
+            <label for="dice_roller_sides">Кубик — число сторон (20 = d20, 6 = d6, 100 = d100...)</label>
+            <input id="dice_roller_sides" type="number" min="2" max="1000" class="text_pole" />
+
+            <label for="dice_roller_modifier">Модификатор (прибавка/штраф к результату)</label>
+            <input id="dice_roller_modifier" type="number" class="text_pole" />
+
+            <label class="checkbox_label">
+                <input id="dice_roller_toast" type="checkbox" />
+                <span>Показывать всплывающее уведомление о броске</span>
+            </label>
+
+            <label for="dice_roller_skip">Не бросать для этих типов генерации (через запятую)</label>
+            <input id="dice_roller_skip" type="text" class="text_pole" placeholder="quiet, impersonate" />
+
+            <label for="dice_roller_template">Шаблон сообщения в чате</label>
+            <textarea id="dice_roller_template" class="text_pole" rows="3"></textarea>
+            <small>Плейсхолдеры: {{die}}, {{raw}}, {{modifier}}, {{modifier_str}}, {{total}}, {{label}}</small>
+
+            <div class="flex-container" style="margin-top: 10px;">
+                <input id="dice_roller_test" class="menu_button" type="button" value="Тестовый бросок" />
+            </div>
+
+        </div>
+    </div>
+</div>
