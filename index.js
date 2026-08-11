@@ -110,14 +110,27 @@ globalThis.diceRollerInterceptor = async function (chat, contextSize, abort, typ
     const raw = rollDie(sides);
     const text = buildRollText(settings, sides, raw);
 
-    chat.push({
-        is_user: false,
-        is_system: true,
-        name: 'Dice Roller',
-        send_date: Date.now(),
-        mes: text,
-        extra: { isSmallSys: true, dice_roller: { sides, raw } },
-    });
+    const lastMsg = chat[chat.length - 1];
+
+    if (lastMsg && lastMsg.is_user) {
+        // Дописываем как OOC-заметку в реальное сообщение {{user}},
+        // а не отдельным элементом chat[] — не создаёт лишний "ход"
+        // и не зависит от того, как конкретный backend конвертирует роли.
+        lastMsg.mes += `\n\n[OOC: ${text}]`;
+        lastMsg.extra = lastMsg.extra || {};
+        lastMsg.extra.dice_roller = { sides, raw };
+    } else {
+        // Аварийный вариант: последнее сообщение не от {{user}}
+        // (swipe/regenerate) — старое поведение с отдельным сообщением.
+        chat.push({
+            is_user: false,
+            is_system: true,
+            name: 'Dice Roller',
+            send_date: Date.now(),
+            mes: text,
+            extra: { isSmallSys: true, dice_roller: { sides, raw } },
+        });
+    }
 
     if (settings.showToast) {
         toastr.info(text, 'Dice Roller', { timeOut: 2500 });
