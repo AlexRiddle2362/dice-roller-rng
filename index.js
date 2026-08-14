@@ -17,6 +17,7 @@ const defaultSettings = Object.freeze({
     modifier: 0,
     showToast: true,
     skipTypes: 'quiet',
+    disableCritFail: false,
     template: '🎲 Бросок {{die}}{{modifier_str}}: {{raw}} → итог {{total}}{{label}}',
 });
 
@@ -64,9 +65,20 @@ function timeSeed() {
     return (ms ^ (frac << 6) ^ (jitter << 13)) >>> 0;
 }
 
-function rollDie(sides) {
-    const rand = mulberry32(timeSeed())();
-    return 1 + Math.floor(rand * sides);
+function rollDie(sides, options = {}) {
+    let result = 1 + Math.floor(mulberry32(timeSeed())() * sides);
+
+    // Опционально убираем критический провал (natural 1) из возможных
+    // исходов — переброс, а не подмена результата задним числом.
+    if (options.avoidCritFail && result === 1) {
+        result = 1 + Math.floor(mulberry32(timeSeed())() * sides);
+        if (result === 1) {
+            // Крайне редкий повторный промах — сдвигаем на ближайшее не-критическое значение
+            result = 2;
+        }
+    }
+
+    return result;
 }
 
 // ---------------------------------------------------------------------
@@ -107,7 +119,7 @@ globalThis.diceRollerInterceptor = async function (chat, contextSize, abort, typ
     if (skip.includes(type)) return;
 
     const sides = Number(settings.dieSides) || 20;
-    const raw = rollDie(sides);
+    const raw = rollDie(sides, { avoidCritFail: settings.disableCritFail });
     const text = buildRollText(settings, sides, raw);
 
     const lastMsg = chat[chat.length - 1];
@@ -170,6 +182,11 @@ function bindSettingsUI() {
         saveSettingsDebounced();
     });
 
+    $('#dice_roller_no_critfail').prop('checked', settings.disableCritFail).on('change', function () {
+        settings.disableCritFail = $(this).prop('checked');
+        saveSettingsDebounced();
+    });
+
     $('#dice_roller_template').val(settings.template).on('input', function () {
         settings.template = $(this).val();
         saveSettingsDebounced();
@@ -177,7 +194,7 @@ function bindSettingsUI() {
 
     $('#dice_roller_test').on('click', function () {
         const sides = Number(settings.dieSides) || 20;
-        const raw = rollDie(sides);
+        const raw = rollDie(sides, { avoidCritFail: settings.disableCritFail });
         toastr.info(buildRollText(settings, sides, raw), 'Dice Roller (тест)', { timeOut: 4000 });
     });
 }

@@ -25,6 +25,11 @@
             <label for="dice_roller_skip">Не бросать для этих типов генерации (через запятую)</label>
             <input id="dice_roller_skip" type="text" class="text_pole" placeholder="quiet, impersonate" />
 
+            <label class="checkbox_label">
+                <input id="dice_roller_no_critfail" type="checkbox" />
+                <span>Отключить критический провал (natural 1 никогда не выпадает)</span>
+            </label>
+
             <label for="dice_roller_template">Шаблон сообщения в чате</label>
             <textarea id="dice_roller_template" class="text_pole" rows="3"></textarea>
             <small>Плейсхолдеры: {{die}}, {{raw}}, {{modifier}}, {{modifier_str}}, {{total}}, {{label}}</small>
